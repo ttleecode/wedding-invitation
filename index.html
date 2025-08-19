@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我們的婚禮邀請</title>
+    <title>✨Tim&Lena's Wedding✨</title>
     <style>
         * {
             margin: 0;
@@ -16,24 +16,25 @@
             background: linear-gradient(135deg, #ffeef7 0%, #f0e6ff 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
         .invitation-container {
-            max-width: 600px;
-            width: 100%;
+            max-width: 1000px;
+            width: 90%;
             position: relative;
             perspective: 1000px;
+            margin: auto;
         }
 
         .invitation-card {
             position: relative;
             width: 100%;
-            height: 80vh;
-            max-height: 800px;
-            min-height: 500px;
+            height: 0;
+            padding-bottom: 64.24%; /* 10.6/16.5 = 0.6424 = 64.24% */
             transform-style: preserve-3d;
             transition: transform 0.8s ease-in-out;
             cursor: pointer;
@@ -65,15 +66,13 @@
         .card-side img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             border-radius: 15px;
         }
 
         .flip-hint {
-            position: absolute;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
+            position: relative;
+            margin-top: 30px;
             text-align: center;
             color: #666;
             font-size: 14px;
@@ -132,20 +131,38 @@
         /* 手機版優化 */
         @media (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 20px 15px;
+            }
+            
+            .invitation-container {
+                width: 95%;
+                max-width: none;
             }
             
             .invitation-card {
-                height: 70vh;
-                min-height: 400px;
+                padding-bottom: 68%; /* 手機版稍微調整比例，避免太扁 */
             }
             
             .flip-hint {
-                bottom: -40px;
+                margin-top: 20px;
                 font-size: 12px;
             }
             
             .music-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+        }
+
+        /* 大螢幕優化 */
+        @media (min-width: 1200px) {
+            .invitation-container {
+                max-width: 1200px;
+            }
+        }
                 top: 15px;
                 right: 15px;
                 width: 45px;
@@ -166,7 +183,7 @@
             </div>
         </div>
         <div class="flip-hint">
-            點擊翻面查看更多資訊 ✨
+            點擊照片翻面查看更多資訊
         </div>
     </div>
 
