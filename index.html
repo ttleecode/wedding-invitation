@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我們的婚禮邀請</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #ffeef7 0%, #f0e6ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .invitation-container {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .invitation-card {
+            position: relative;
+            width: 100%;
+            height: 80vh;
+            max-height: 800px;
+            min-height: 500px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease-in-out;
+            cursor: pointer;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .invitation-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .card-side img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 15px;
+        }
+
+        .flip-hint {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .error {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #999;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* 手機版優化 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .invitation-card {
+                height: 70vh;
+                min-height: 400px;
+            }
+            
+            .flip-hint {
+                bottom: -40px;
+                font-size: 12px;
+            }
+            
+            .music-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invitation-container">
+        <div class="invitation-card" id="invitationCard">
+            <div class="card-side card-front">
+                <img src="front.png" alt="喜帖正面" id="frontImg">
+            </div>
+            <div class="card-side card-back">
+                <img src="back.png" alt="喜帖背面" id="backImg">
+            </div>
+        </div>
+        <div class="flip-hint">
+            點擊翻面查看更多資訊 ✨
+        </div>
+    </div>
+
+    <!-- 可選：背景音樂按鈕 -->
+    <!-- <button class="music-toggle" id="musicToggle">🎵</button>
+    <audio id="backgroundMusic" loop>
+        <source src="wedding-music.mp3" type="audio/mpeg">
+    </audio> -->
+
+    <script>
+        const invitationCard = document.getElementById('invitationCard');
+        const frontImg = document.getElementById('frontImg');
+        const backImg = document.getElementById('backImg');
+        // const musicToggle = document.getElementById('musicToggle');
+        // const backgroundMusic = document.getElementById('backgroundMusic');
+
+        // 翻牌效果
+        invitationCard.addEventListener('click', () => {
+            invitationCard.classList.toggle('flipped');
+        });
+
+        // 圖片載入錯誤處理
+        function handleImageError(img, side) {
+            img.parentElement.innerHTML = `
+                <div class="error">
+                    <p>😔 圖片載入失敗</p>
+                    <p>請確認 ${side}.png 檔案已正確上傳</p>
+                </div>
+            `;
+        }
+
+        frontImg.addEventListener('error', () => handleImageError(frontImg, 'front'));
+        backImg.addEventListener('error', () => handleImageError(backImg, 'back'));
+
+        // 圖片載入完成前顯示載入中
+        frontImg.addEventListener('load', () => {
+            frontImg.style.opacity = '1';
+        });
+        backImg.addEventListener('load', () => {
+            backImg.style.opacity = '1';
+        });
+
+        // 背景音樂控制（可選功能）
+        // let isPlaying = false;
+        // musicToggle.addEventListener('click', (e) => {
+        //     e.stopPropagation();
+        //     if (isPlaying) {
+        //         backgroundMusic.pause();
+        //         musicToggle.textContent = '🎵';
+        //         isPlaying = false;
+        //     } else {
+        //         backgroundMusic.play().catch(e => console.log('音樂播放失敗'));
+        //         musicToggle.textContent = '🎶';
+        //         isPlaying = true;
+        //     }
+        // });
+
+        // 預載入圖片
+        const preloadImages = () => {
+            frontImg.style.opacity = '0';
+            backImg.style.opacity = '0';
+            
+            const images = ['front.png', 'back.png'];
+            let loadedCount = 0;
+            
+            images.forEach(src => {
+                const img = new Image();
+                img.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === images.length) {
+                        frontImg.style.opacity = '1';
+                        backImg.style.opacity = '1';
+                    }
+                };
+                img.src = src;
+            });
+        };
+
+        // 頁面載入完成後預載入圖片
+        window.addEventListener('load', preloadImages);
+    </script>
+</body>
+</html>
