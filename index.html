@@ -19,7 +19,7 @@
 
         body {
             font-family: 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #ffeef7 0%, #f0e6ff 100%);
+            background: #000000;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -125,7 +125,7 @@
         .video-hint {
             margin-top: 15px;
             text-align: center;
-            color: #666;
+            color: #cccccc;
             font-size: 14px;
             opacity: 0.8;
             animation: pulse 2s infinite;
@@ -146,15 +146,15 @@
             justify-content: center;
             align-items: center;
             font-size: 18px;
-            color: #666;
+            color: #cccccc;
             text-align: center;
         }
 
         .loading-spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #ff69b4;
+            border: 4px solid #333333;
+            border-top: 4px solid #ffffff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 10px;
@@ -175,10 +175,10 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #999;
+            color: #cccccc;
             text-align: center;
             padding: 20px;
-            background: rgba(255,255,255,0.9);
+            background: rgba(0,0,0,0.8);
             border-radius: 15px;
         }
 
@@ -214,7 +214,7 @@
                 padding: 8px 16px;
             }
             
-            /* 手機版隱藏全螢幕按鈕，使用原生控制 */
+            /* 手機版隱藏全螢幕按鈕，避免與原生控制重複 */
             .fullscreen-btn {
                 display: none;
             }
@@ -276,7 +276,6 @@
                 muted 
                 loop
                 playsinline
-                controls
                 webkit-playsinline
                 style="display: none;"
             >
@@ -481,8 +480,9 @@
         // 顯示播放按鈕（當自動播放被阻擋時）
         function showPlayButton() {
             playPauseBtn.textContent = '▶️';
-            document.querySelector('.video-overlay').style.opacity = '1';
-            document.querySelector('.video-overlay').style.pointerEvents = 'auto';
+            videoOverlay.style.opacity = '1';
+            videoOverlay.style.pointerEvents = 'auto';
+            // 暫停狀態下不自動隱藏
         }
 
         // 預載入影片
