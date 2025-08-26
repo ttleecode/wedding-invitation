@@ -213,6 +213,15 @@
                 font-size: 12px;
                 padding: 8px 16px;
             }
+            
+            /* 手機版隱藏全螢幕按鈕，使用原生控制 */
+            .fullscreen-btn {
+                display: none;
+            }
+            
+            .wedding-video {
+                -webkit-playsinline: true;
+            }
         }
 
         /* 大螢幕優化 */
@@ -267,6 +276,8 @@
                 muted 
                 loop
                 playsinline
+                controls
+                webkit-playsinline
                 style="display: none;"
             >
                 <source src="wedding-video.mp4" type="video/mp4">
@@ -301,8 +312,52 @@
         const soundToggle = document.getElementById('soundToggle');
         const restartBtn = document.getElementById('restartBtn');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const videoOverlay = document.querySelector('.video-overlay');
 
         let isMuted = true;
+        let hideControlsTimeout;
+
+        // 顯示控制按鈕
+        function showControls() {
+            videoOverlay.style.opacity = '1';
+            videoOverlay.style.pointerEvents = 'auto';
+            
+            // 清除之前的計時器
+            if (hideControlsTimeout) {
+                clearTimeout(hideControlsTimeout);
+            }
+            
+            // 2秒後隱藏控制按鈕
+            hideControlsTimeout = setTimeout(() => {
+                hideControls();
+            }, 2000);
+        }
+
+        // 隱藏控制按鈕
+        function hideControls() {
+            // 只有在影片播放時才隱藏控制按鈕
+            if (!video.paused) {
+                videoOverlay.style.opacity = '0';
+                videoOverlay.style.pointerEvents = 'none';
+            }
+        }
+
+        // 滑鼠進入時顯示控制按鈕
+        video.addEventListener('mouseenter', showControls);
+        
+        // 滑鼠移出時立即隱藏（桌面版）
+        video.addEventListener('mouseleave', () => {
+            if (window.innerWidth > 768) { // 只在桌面版立即隱藏
+                hideControls();
+                if (hideControlsTimeout) {
+                    clearTimeout(hideControlsTimeout);
+                }
+            }
+        });
+
+        // 觸控事件（手機版）
+        video.addEventListener('touchstart', showControls);
+        video.addEventListener('click', showControls);
 
         // 影片載入完成
         video.addEventListener('loadeddata', () => {
@@ -335,16 +390,19 @@
                 video.pause();
                 playPauseBtn.textContent = '▶️';
             }
+            showControls(); // 點擊後重新開始計時
         });
 
         // 點擊影片播放/暫停
-        video.addEventListener('click', () => {
-            if (video.paused) {
-                video.play();
-                playPauseBtn.textContent = '⏸️';
-            } else {
-                video.pause();
-                playPauseBtn.textContent = '▶️';
+        video.addEventListener('click', (e) => {
+            if (e.target === video) { // 確保點擊的是影片本身
+                if (video.paused) {
+                    video.play();
+                    playPauseBtn.textContent = '⏸️';
+                } else {
+                    video.pause();
+                    playPauseBtn.textContent = '▶️';
+                }
             }
         });
 
@@ -368,24 +426,56 @@
             playPauseBtn.textContent = '⏸️';
         });
 
-        // 全螢幕功能
-        fullscreenBtn.addEventListener('click', () => {
+        // 全螢幕按鈕
+        fullscreenBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const videoContainer = document.querySelector('.video-card');
+            
+            // 優先使用 video 元素的全螢幕
             if (video.requestFullscreen) {
                 video.requestFullscreen();
             } else if (video.webkitRequestFullscreen) {
-                video.webkitRequestFullscreen();
+                video.webkitRequestFullscreen(); // Safari
+            } else if (video.mozRequestFullScreen) {
+                video.mozRequestFullScreen(); // Firefox
             } else if (video.msRequestFullscreen) {
-                video.msRequestFullscreen();
+                video.msRequestFullscreen(); // IE/Edge
             }
+            // 如果 video 全螢幕不支援，嘗試容器全螢幕
+            else if (videoContainer.requestFullscreen) {
+                videoContainer.requestFullscreen();
+            } else if (videoContainer.webkitRequestFullscreen) {
+                videoContainer.webkitRequestFullscreen();
+            } else if (videoContainer.mozRequestFullScreen) {
+                videoContainer.mozRequestFullScreen();
+            } else if (videoContainer.msRequestFullscreen) {
+                videoContainer.msRequestFullscreen();
+            }
+            // 手機 Safari 的特殊處理
+            else if (video.webkitEnterFullscreen) {
+                video.webkitEnterFullscreen(); // iOS Safari
+            }
+            
+            showControls(); // 點擊全螢幕後重新開始計時
         });
 
         // 監聽影片播放狀態
         video.addEventListener('play', () => {
             playPauseBtn.textContent = '⏸️';
+            // 播放時2秒後隱藏控制按鈕
+            hideControlsTimeout = setTimeout(() => {
+                hideControls();
+            }, 2000);
         });
 
         video.addEventListener('pause', () => {
             playPauseBtn.textContent = '▶️';
+            // 暫停時保持控制按鈕可見
+            if (hideControlsTimeout) {
+                clearTimeout(hideControlsTimeout);
+            }
+            videoOverlay.style.opacity = '1';
+            videoOverlay.style.pointerEvents = 'auto';
         });
 
         // 顯示播放按鈕（當自動播放被阻擋時）
