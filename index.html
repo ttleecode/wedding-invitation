@@ -84,28 +84,54 @@
             height: 80px;
             border-radius: 50%;
             background: rgba(255,255,255,0.9) !important;
-            color: #000000 !important;
             border: none !important;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             outline: none !important;
+            position: relative;
         }
 
         .play-pause-btn:hover {
             transform: scale(1.1);
             background: rgba(255,255,255,1) !important;
-            color: #000000 !important;
         }
 
         .play-pause-btn:focus {
             outline: none !important;
             background: rgba(255,255,255,1) !important;
-            color: #000000 !important;
+        }
+
+        /* 播放三角形 */
+        .play-pause-btn.play::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 15px solid #000000;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            margin-left: 3px;
+        }
+
+        /* 暫停雙線 */
+        .play-pause-btn.pause::before,
+        .play-pause-btn.pause::after {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #000000;
+            position: absolute;
+        }
+
+        .play-pause-btn.pause::before {
+            left: 30px;
+        }
+
+        .play-pause-btn.pause::after {
+            right: 30px;
         }
 
         .video-controls {
@@ -219,9 +245,7 @@
             .play-pause-btn {
                 width: 60px;
                 height: 60px;
-                font-size: 20px;
                 background: rgba(255,255,255,0.9) !important;
-                color: #000000 !important;
                 border: none !important;
                 outline: none !important;
             }
@@ -229,7 +253,27 @@
             .play-pause-btn:hover,
             .play-pause-btn:focus {
                 background: rgba(255,255,255,1) !important;
-                color: #000000 !important;
+            }
+            
+            /* 手機版播放三角形 */
+            .play-pause-btn.play::after {
+                border-left: 12px solid #000000;
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                margin-left: 2px;
+            }
+
+            /* 手機版暫停雙線 */
+            .play-pause-btn.pause::before {
+                left: 22px;
+                width: 3px;
+                height: 16px;
+            }
+
+            .play-pause-btn.pause::after {
+                right: 22px;
+                width: 3px;
+                height: 16px;
             }
             
             .sound-toggle {
@@ -441,15 +485,18 @@
             if (video.ended) {
                 video.currentTime = 0;
                 video.play();
-                playPauseBtn.textContent = '⏸️';
+                playPauseBtn.className = 'play-pause-btn pause';
+                playPauseBtn.textContent = '';
             }
             // 正常播放/暫停
             else if (video.paused) {
                 video.play();
-                playPauseBtn.textContent = '⏸️';
+                playPauseBtn.className = 'play-pause-btn pause';
+                playPauseBtn.textContent = '';
             } else {
                 video.pause();
-                playPauseBtn.textContent = '▶️';
+                playPauseBtn.className = 'play-pause-btn play';
+                playPauseBtn.textContent = '';
             }
             showControls(); // 點擊後重新開始計時
         });
@@ -461,16 +508,19 @@
                 if (video.ended) {
                     video.currentTime = 0;
                     video.play();
-                    playPauseBtn.textContent = '⏸️';
+                    playPauseBtn.className = 'play-pause-btn pause';
+                    playPauseBtn.textContent = '';
                     showControls(); // 重新播放時顯示控制按鈕
                 }
                 // 正常播放/暫停
                 else if (video.paused) {
                     video.play();
-                    playPauseBtn.textContent = '⏸️';
+                    playPauseBtn.className = 'play-pause-btn pause';
+                    playPauseBtn.textContent = '';
                 } else {
                     video.pause();
-                    playPauseBtn.textContent = '▶️';
+                    playPauseBtn.className = 'play-pause-btn play';
+                    playPauseBtn.textContent = '';
                 }
             }
         });
@@ -530,7 +580,8 @@
 
         // 監聽影片播放狀態
         video.addEventListener('play', () => {
-            playPauseBtn.textContent = '⏸️';
+            playPauseBtn.className = 'play-pause-btn pause';
+            playPauseBtn.textContent = '';
             // 播放時2秒後隱藏控制按鈕
             hideControlsTimeout = setTimeout(() => {
                 hideControls();
@@ -538,7 +589,8 @@
         });
 
         video.addEventListener('pause', () => {
-            playPauseBtn.textContent = '▶️';
+            playPauseBtn.className = 'play-pause-btn play';
+            playPauseBtn.textContent = '';
             // 暫停時保持控制按鈕可見
             if (hideControlsTimeout) {
                 clearTimeout(hideControlsTimeout);
@@ -549,7 +601,8 @@
 
         // 顯示播放按鈕（當自動播放被阻擋時）
         function showPlayButton() {
-            playPauseBtn.textContent = '▶️';
+            playPauseBtn.className = 'play-pause-btn play';
+            playPauseBtn.textContent = '';
             videoOverlay.style.opacity = '1';
             videoOverlay.style.pointerEvents = 'auto';
             // 暫停狀態下不自動隱藏
