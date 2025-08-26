@@ -25,7 +25,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px;
+            padding: 20px;
         }
 
         .invitation-container {
@@ -40,7 +40,7 @@
             width: 100%;
             max-width: 500px; /* 限制最大寬度，避免在大螢幕上太寬 */
             height: 0;
-            padding-bottom: 177.78%; /* 1920/1080 = 1.7778 = 177.78% 直版比例 */
+            padding-bottom: 177.78%; /* 1920/1080 = 1.7778，所以高度是寬度的177.78% */
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             overflow: hidden;
@@ -185,16 +185,17 @@
         /* 手機版優化 */
         @media (max-width: 768px) {
             body {
-                padding: 20px 15px;
+                padding: 15px 10px;
             }
             
             .invitation-container {
                 width: 95%;
-                max-width: none;
+                max-width: 400px; /* 手機版限制更小的寬度 */
             }
             
             .video-card {
-                padding-bottom: 68%; /* 手機版稍微調整比例 */
+                max-width: 100%;
+                padding-bottom: 177.78%; /* 保持直版比例 */
             }
             
             .play-pause-btn {
@@ -217,7 +218,11 @@
         /* 大螢幕優化 */
         @media (min-width: 1200px) {
             .invitation-container {
-                max-width: 1200px;
+                max-width: 600px; /* 大螢幕也不要太寬 */
+            }
+            
+            .video-card {
+                max-width: 500px;
             }
         }
 
