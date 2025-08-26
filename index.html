@@ -32,53 +32,96 @@
             max-width: 1000px;
             width: 90%;
             position: relative;
-            perspective: 1000px;
             margin: auto;
         }
 
-        .invitation-card {
+        .video-card {
             position: relative;
             width: 100%;
             height: 0;
-            padding-bottom: 64.24%; /* 10.6/16.5 = 0.6424 = 64.24% */
-            transform-style: preserve-3d;
-            transition: transform 0.8s ease-in-out;
-            cursor: pointer;
+            padding-bottom: 64.24%; /* 16.5:10.6 比例 */
             border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-
-        .invitation-card.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card-side {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             background: white;
         }
 
-        .card-back {
-            transform: rotateY(180deg);
-        }
-
-        .card-side img {
+        .wedding-video {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
             border-radius: 15px;
+            object-fit: cover;
+            cursor: pointer;
         }
 
-        .flip-hint {
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        .video-card:hover .video-overlay {
+            opacity: 1;
+        }
+
+        .play-pause-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .play-pause-btn:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .video-controls {
             position: relative;
-            margin-top: 30px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .sound-toggle {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .sound-toggle:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .video-hint {
+            margin-top: 15px;
             text-align: center;
             color: #666;
             font-size: 14px;
@@ -91,47 +134,50 @@
             50% { opacity: 1; }
         }
 
-        .music-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .music-toggle:hover {
-            transform: scale(1.1);
-            background: white;
-        }
-
         .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            font-size: 18px;
-            color: #666;
-        }
-
-        .error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            font-size: 18px;
+            color: #666;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff69b4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             color: #999;
             text-align: center;
             padding: 20px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
         }
 
         /* 手機版優化 */
@@ -145,21 +191,24 @@
                 max-width: none;
             }
             
-            .invitation-card {
-                padding-bottom: 68%; /* 手機版稍微調整比例，避免太扁 */
+            .video-card {
+                padding-bottom: 68%; /* 手機版稍微調整比例 */
             }
             
-            .flip-hint {
-                margin-top: 20px;
+            .play-pause-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 20px;
+            }
+            
+            .video-hint {
+                margin-top: 15px;
                 font-size: 12px;
             }
             
-            .music-toggle {
-                top: 15px;
-                right: 15px;
-                width: 45px;
-                height: 45px;
-                font-size: 16px;
+            .sound-toggle {
+                font-size: 12px;
+                padding: 8px 16px;
             }
         }
 
@@ -169,100 +218,178 @@
                 max-width: 1200px;
             }
         }
+
+        /* 全螢幕模式樣式 */
+        .fullscreen-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.8);
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover .fullscreen-btn {
+            opacity: 1;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(255,255,255,0.95);
+        }
     </style>
 </head>
 <body>
     <div class="invitation-container">
-        <div class="invitation-card" id="invitationCard">
-            <div class="card-side card-front">
-                <img src="front.png" alt="喜帖正面" id="frontImg">
+        <div class="video-card">
+            <!-- 載入中顯示 -->
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>載入中...</p>
             </div>
-            <div class="card-side card-back">
-                <img src="back.png" alt="喜帖背面" id="backImg">
+            
+            <!-- 影片元素 -->
+            <video 
+                class="wedding-video" 
+                id="weddingVideo"
+                autoplay 
+                muted 
+                loop
+                playsinline
+                style="display: none;"
+            >
+                <source src="wedding-video.mp4" type="video/mp4">
+                <source src="wedding-video.webm" type="video/webm">
+                您的瀏覽器不支援影片播放。
+            </video>
+            
+            <!-- 影片覆蓋層（hover 顯示控制按鈕） -->
+            <div class="video-overlay">
+                <button class="play-pause-btn" id="playPauseBtn">⏸️</button>
             </div>
+            
+            <!-- 全螢幕按鈕 -->
+            <button class="fullscreen-btn" id="fullscreenBtn">⛶ 全螢幕</button>
         </div>
-        <div class="flip-hint">
-            點擊照片翻面查看更多資訊
+        
+        <!-- 影片控制 -->
+        <div class="video-controls">
+            <button class="sound-toggle" id="soundToggle">🔇 開啟音效</button>
+            <button class="sound-toggle" id="restartBtn">🔄 重新播放</button>
+        </div>
+        
+        <div class="video-hint">
+            將滑鼠移到影片上方顯示控制按鈕 ✨
         </div>
     </div>
 
-    <!-- 可選：背景音樂按鈕 -->
-    <!-- <button class="music-toggle" id="musicToggle">🎵</button>
-    <audio id="backgroundMusic" loop>
-        <source src="wedding-music.mp3" type="audio/mpeg">
-    </audio> -->
-
     <script>
-        const invitationCard = document.getElementById('invitationCard');
-        const frontImg = document.getElementById('frontImg');
-        const backImg = document.getElementById('backImg');
-        // const musicToggle = document.getElementById('musicToggle');
-        // const backgroundMusic = document.getElementById('backgroundMusic');
+        const video = document.getElementById('weddingVideo');
+        const loading = document.getElementById('loading');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const soundToggle = document.getElementById('soundToggle');
+        const restartBtn = document.getElementById('restartBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
 
-        // 翻牌效果
-        invitationCard.addEventListener('click', () => {
-            invitationCard.classList.toggle('flipped');
+        let isMuted = true;
+
+        // 影片載入完成
+        video.addEventListener('loadeddata', () => {
+            loading.style.display = 'none';
+            video.style.display = 'block';
+            video.play().catch(e => {
+                console.log('自動播放被阻擋，使用者需要手動點擊');
+                showPlayButton();
+            });
         });
 
-        // 圖片載入錯誤處理
-        function handleImageError(img, side) {
-            img.parentElement.innerHTML = `
+        // 影片載入錯誤
+        video.addEventListener('error', () => {
+            loading.innerHTML = `
                 <div class="error">
-                    <p>😔 圖片載入失敗</p>
-                    <p>請確認 ${side}.png 檔案已正確上傳</p>
+                    <p>😔 影片載入失敗</p>
+                    <p>請確認 wedding-video.mp4 檔案已正確上傳</p>
+                    <p>支援格式：MP4, WebM</p>
                 </div>
             `;
+        });
+
+        // 播放/暫停按鈕
+        playPauseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (video.paused) {
+                video.play();
+                playPauseBtn.textContent = '⏸️';
+            } else {
+                video.pause();
+                playPauseBtn.textContent = '▶️';
+            }
+        });
+
+        // 點擊影片播放/暫停
+        video.addEventListener('click', () => {
+            if (video.paused) {
+                video.play();
+                playPauseBtn.textContent = '⏸️';
+            } else {
+                video.pause();
+                playPauseBtn.textContent = '▶️';
+            }
+        });
+
+        // 音效控制
+        soundToggle.addEventListener('click', () => {
+            if (isMuted) {
+                video.muted = false;
+                soundToggle.textContent = '🔊 關閉音效';
+                isMuted = false;
+            } else {
+                video.muted = true;
+                soundToggle.textContent = '🔇 開啟音效';
+                isMuted = true;
+            }
+        });
+
+        // 重新播放
+        restartBtn.addEventListener('click', () => {
+            video.currentTime = 0;
+            video.play();
+            playPauseBtn.textContent = '⏸️';
+        });
+
+        // 全螢幕功能
+        fullscreenBtn.addEventListener('click', () => {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) {
+                video.msRequestFullscreen();
+            }
+        });
+
+        // 監聽影片播放狀態
+        video.addEventListener('play', () => {
+            playPauseBtn.textContent = '⏸️';
+        });
+
+        video.addEventListener('pause', () => {
+            playPauseBtn.textContent = '▶️';
+        });
+
+        // 顯示播放按鈕（當自動播放被阻擋時）
+        function showPlayButton() {
+            playPauseBtn.textContent = '▶️';
+            document.querySelector('.video-overlay').style.opacity = '1';
+            document.querySelector('.video-overlay').style.pointerEvents = 'auto';
         }
 
-        frontImg.addEventListener('error', () => handleImageError(frontImg, 'front'));
-        backImg.addEventListener('error', () => handleImageError(backImg, 'back'));
-
-        // 圖片載入完成前顯示載入中
-        frontImg.addEventListener('load', () => {
-            frontImg.style.opacity = '1';
-        });
-        backImg.addEventListener('load', () => {
-            backImg.style.opacity = '1';
-        });
-
-        // 背景音樂控制（可選功能）
-        // let isPlaying = false;
-        // musicToggle.addEventListener('click', (e) => {
-        //     e.stopPropagation();
-        //     if (isPlaying) {
-        //         backgroundMusic.pause();
-        //         musicToggle.textContent = '🎵';
-        //         isPlaying = false;
-        //     } else {
-        //         backgroundMusic.play().catch(e => console.log('音樂播放失敗'));
-        //         musicToggle.textContent = '🎶';
-        //         isPlaying = true;
-        //     }
-        // });
-
-        // 預載入圖片
-        const preloadImages = () => {
-            frontImg.style.opacity = '0';
-            backImg.style.opacity = '0';
-            
-            const images = ['front.png', 'back.png'];
-            let loadedCount = 0;
-            
-            images.forEach(src => {
-                const img = new Image();
-                img.onload = () => {
-                    loadedCount++;
-                    if (loadedCount === images.length) {
-                        frontImg.style.opacity = '1';
-                        backImg.style.opacity = '1';
-                    }
-                };
-                img.src = src;
-            });
-        };
-
-        // 頁面載入完成後預載入圖片
-        window.addEventListener('load', preloadImages);
+        // 預載入影片
+        video.load();
     </script>
 </body>
 </html>
