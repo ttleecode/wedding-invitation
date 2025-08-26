@@ -1,4 +1,43 @@
-<!DOCTYPE html>
+        // 重新播放
+        restartBtn.addEventListener('click', () => {
+            video.currentTime = 0;
+            video.play();
+            playPauseBtn.className = 'play-pause-btn pause';
+            playPauseBtn.textContent = '';
+        });
+
+        // 全螢幕功能
+        fullscreenBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const videoContainer = document.querySelector('.video-card');
+            
+            // 優先使用 video 元素的全螢幕
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen(); // Safari
+            } else if (video.mozRequestFullScreen) {
+                video.mozRequestFullScreen(); // Firefox
+            } else if (video.msRequestFullscreen) {
+                video.msRequestFullscreen(); // IE/Edge
+            }
+            // 如果 video 全螢幕不支援，嘗試容器全螢幕
+            else if (videoContainer.requestFullscreen) {
+                videoContainer.requestFullscreen();
+            } else if (videoContainer.webkitRequestFullscreen) {
+                videoContainer.webkitRequestFullscreen();
+            } else if (videoContainer.mozRequestFullScreen) {
+                videoContainer.mozRequestFullScreen();
+            } else if (videoContainer.msRequestFullscreen) {
+                videoContainer.msRequestFullscreen();
+            }
+            // 手機 Safari 的特殊處理
+            else if (video.webkitEnterFullscreen) {
+                video.webkitEnterFullscreen(); // iOS Safari
+            }
+            
+            showControls(); // 點擊全螢幕後重新開始計時
+        });<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -378,9 +417,9 @@
             <button class="fullscreen-btn" id="fullscreenBtn">⛶ 全螢幕</button>
         </div>
         
-        <!-- 影片控制 -->
+        <!-- 音樂控制 -->
         <div class="video-controls">
-            <button class="sound-toggle" id="soundToggle">🔇 開啟音效</button>
+            <button class="sound-toggle" id="musicToggle">🔇 開啟音樂</button>
             <button class="sound-toggle" id="restartBtn">🔄 重新播放</button>
         </div>
         
@@ -393,12 +432,13 @@
         const video = document.getElementById('weddingVideo');
         const loading = document.getElementById('loading');
         const playPauseBtn = document.getElementById('playPauseBtn');
-        const soundToggle = document.getElementById('soundToggle');
+        const musicToggle = document.getElementById('musicToggle');
         const restartBtn = document.getElementById('restartBtn');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const videoOverlay = document.querySelector('.video-overlay');
+        const backgroundMusic = document.getElementById('backgroundMusic');
 
-        let isMuted = true;
+        let isMusicPlaying = false;
         let hideControlsTimeout;
 
         // 顯示控制按鈕
