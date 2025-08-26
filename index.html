@@ -172,6 +172,17 @@
             animation: pulse 2s infinite;
         }
 
+        .wedding-info {
+            display: inline-block;
+            border: 2px solid #cccccc;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(5px);
+            line-height: 1.6;
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 0.6; }
             50% { opacity: 1; }
@@ -298,6 +309,14 @@
                 font-size: 12px;
             }
             
+            .wedding-info {
+                font-size: 11px;
+                padding: 12px 16px;
+                margin: 8px 0;
+                border-width: 1.5px;
+                border-radius: 8px;
+            }
+            
             .sound-toggle {
                 font-size: 12px;
                 padding: 8px 16px;
@@ -361,11 +380,13 @@
         </div>
         
         <div class="video-hint">
-            ✨Tim & Lena Wedding Invitation✨<br>
-            2025.11.15 12:00入席<br>
-            台北遠東香格里拉飯店<br>
-            2F 香格里拉宴會廳<br>
-            💕誠摯邀請大家前來參與，一同見證我們人生新的篇章💕<br>
+            ✨Tim & Lena Wedding Invitation✨<br><br>
+            <div class="wedding-info">
+                2025.11.15 12:00入席<br>
+                台北遠東香格里拉飯店<br>
+                2F 香格里拉宴會廳
+            </div>
+            <br>💕誠摯邀請大家前來參與，一同見證我們人生新的篇章💕<br>
         </div>
     </div>
 
