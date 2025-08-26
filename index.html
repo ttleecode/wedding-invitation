@@ -1,43 +1,4 @@
-        // 重新播放
-        restartBtn.addEventListener('click', () => {
-            video.currentTime = 0;
-            video.play();
-            playPauseBtn.className = 'play-pause-btn pause';
-            playPauseBtn.textContent = '';
-        });
-
-        // 全螢幕功能
-        fullscreenBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const videoContainer = document.querySelector('.video-card');
-            
-            // 優先使用 video 元素的全螢幕
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) {
-                video.webkitRequestFullscreen(); // Safari
-            } else if (video.mozRequestFullScreen) {
-                video.mozRequestFullScreen(); // Firefox
-            } else if (video.msRequestFullscreen) {
-                video.msRequestFullscreen(); // IE/Edge
-            }
-            // 如果 video 全螢幕不支援，嘗試容器全螢幕
-            else if (videoContainer.requestFullscreen) {
-                videoContainer.requestFullscreen();
-            } else if (videoContainer.webkitRequestFullscreen) {
-                videoContainer.webkitRequestFullscreen();
-            } else if (videoContainer.mozRequestFullScreen) {
-                videoContainer.mozRequestFullScreen();
-            } else if (videoContainer.msRequestFullscreen) {
-                videoContainer.msRequestFullscreen();
-            }
-            // 手機 Safari 的特殊處理
-            else if (video.webkitEnterFullscreen) {
-                video.webkitEnterFullscreen(); // iOS Safari
-            }
-            
-            showControls(); // 點擊全螢幕後重新開始計時
-        });<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -64,22 +25,19 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
         }
 
         .invitation-container {
-            max-width: 600px; /* 調整容器最大寬度適合直版 */
+            max-width: 500px;
             width: 90%;
             position: relative;
-            margin: auto;
         }
 
         .video-card {
             position: relative;
             width: 100%;
-            max-width: 500px; /* 限制最大寬度，避免在大螢幕上太寬 */
             height: 0;
-            padding-bottom: 177.78%; /* 1920/1080 = 1.7778，所以高度是寬度的177.78% */
+            padding-bottom: 177.78%; /* 1920/1080 = 1.7778，直版比例 */
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             overflow: hidden;
@@ -265,20 +223,40 @@
             border-radius: 15px;
         }
 
+        /* 全螢幕按鈕 */
+        .fullscreen-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            color: #000000;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover .fullscreen-btn {
+            opacity: 1;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(255,255,255,1);
+        }
+
         /* 手機版優化 */
         @media (max-width: 768px) {
-            body {
-                padding: 15px 10px;
-            }
-            
             .invitation-container {
                 width: 95%;
-                max-width: 400px; /* 手機版限制更小的寬度 */
+                max-width: 400px;
             }
             
             .video-card {
                 max-width: 100%;
-                padding-bottom: 177.78%; /* 保持直版比例 */
+                padding-bottom: 177.78%;
             }
             
             .play-pause-btn {
@@ -315,19 +293,6 @@
                 height: 16px;
             }
             
-            .sound-toggle {
-                background: rgba(255,255,255,0.9) !important;
-                color: #000000 !important;
-                border: none !important;
-                outline: none !important;
-            }
-            
-            .sound-toggle:hover,
-            .sound-toggle:focus {
-                background: rgba(255,255,255,1) !important;
-                color: #000000 !important;
-            }
-            
             .video-hint {
                 margin-top: 15px;
                 font-size: 12px;
@@ -338,49 +303,21 @@
                 padding: 8px 16px;
             }
             
-            /* 手機版隱藏全螢幕按鈕，避免與原生控制重複 */
+            /* 手機版隱藏全螢幕按鈕 */
             .fullscreen-btn {
                 display: none;
-            }
-            
-            .wedding-video {
-                -webkit-playsinline: true;
             }
         }
 
         /* 大螢幕優化 */
         @media (min-width: 1200px) {
             .invitation-container {
-                max-width: 600px; /* 大螢幕也不要太寬 */
+                max-width: 600px;
             }
             
             .video-card {
                 max-width: 500px;
             }
-        }
-
-        /* 全螢幕模式樣式 */
-        .fullscreen-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255,255,255,0.9);
-            color: #000000;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .video-card:hover .fullscreen-btn {
-            opacity: 1;
-        }
-
-        .fullscreen-btn:hover {
-            background: rgba(255,255,255,1);
         }
     </style>
 </head>
@@ -410,7 +347,7 @@
             
             <!-- 影片覆蓋層（hover 顯示控制按鈕） -->
             <div class="video-overlay">
-                <button class="play-pause-btn" id="playPauseBtn">⏸️</button>
+                <button class="play-pause-btn play" id="playPauseBtn"></button>
             </div>
             
             <!-- 全螢幕按鈕 -->
@@ -427,6 +364,13 @@
             影片播放完畢後需手動重播 ✨
         </div>
     </div>
+
+    <!-- 背景音樂 -->
+    <audio id="backgroundMusic" loop>
+        <source src="wedding-music.mp3" type="audio/mpeg">
+        <source src="wedding-music.m4a" type="audio/mp4">
+        <source src="wedding-music.wav" type="audio/wav">
+    </audio>
 
     <script>
         const video = document.getElementById('weddingVideo');
@@ -526,17 +470,14 @@
                 video.currentTime = 0;
                 video.play();
                 playPauseBtn.className = 'play-pause-btn pause';
-                playPauseBtn.textContent = '';
             }
             // 正常播放/暫停
             else if (video.paused) {
                 video.play();
                 playPauseBtn.className = 'play-pause-btn pause';
-                playPauseBtn.textContent = '';
             } else {
                 video.pause();
                 playPauseBtn.className = 'play-pause-btn play';
-                playPauseBtn.textContent = '';
             }
             showControls(); // 點擊後重新開始計時
         });
@@ -549,43 +490,46 @@
                     video.currentTime = 0;
                     video.play();
                     playPauseBtn.className = 'play-pause-btn pause';
-                    playPauseBtn.textContent = '';
                     showControls(); // 重新播放時顯示控制按鈕
                 }
                 // 正常播放/暫停
                 else if (video.paused) {
                     video.play();
                     playPauseBtn.className = 'play-pause-btn pause';
-                    playPauseBtn.textContent = '';
                 } else {
                     video.pause();
                     playPauseBtn.className = 'play-pause-btn play';
-                    playPauseBtn.textContent = '';
                 }
             }
         });
 
-        // 音效控制
-        soundToggle.addEventListener('click', () => {
-            if (isMuted) {
-                video.muted = false;
-                soundToggle.textContent = '🔊 關閉音效';
-                isMuted = false;
-            } else {
-                video.muted = true;
-                soundToggle.textContent = '🔇 開啟音效';
-                isMuted = true;
+        // 監聽影片播放狀態
+        video.addEventListener('play', () => {
+            playPauseBtn.className = 'play-pause-btn pause';
+            // 播放時2秒後隱藏控制按鈕
+            hideControlsTimeout = setTimeout(() => {
+                hideControls();
+            }, 2000);
+        });
+
+        video.addEventListener('pause', () => {
+            playPauseBtn.className = 'play-pause-btn play';
+            // 暫停時保持控制按鈕可見
+            if (hideControlsTimeout) {
+                clearTimeout(hideControlsTimeout);
             }
+            videoOverlay.style.opacity = '1';
+            videoOverlay.style.pointerEvents = 'auto';
         });
 
         // 重新播放
         restartBtn.addEventListener('click', () => {
             video.currentTime = 0;
             video.play();
-            playPauseBtn.textContent = '⏸️';
+            playPauseBtn.className = 'play-pause-btn pause';
         });
 
-        // 全螢幕按鈕
+        // 全螢幕功能
         fullscreenBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const videoContainer = document.querySelector('.video-card');
@@ -618,31 +562,50 @@
             showControls(); // 點擊全螢幕後重新開始計時
         });
 
-        // 監聽影片播放狀態
-        video.addEventListener('play', () => {
-            playPauseBtn.className = 'play-pause-btn pause';
-            playPauseBtn.textContent = '';
-            // 播放時2秒後隱藏控制按鈕
-            hideControlsTimeout = setTimeout(() => {
-                hideControls();
-            }, 2000);
+        // 背景音樂控制
+        musicToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isMusicPlaying) {
+                backgroundMusic.pause();
+                musicToggle.textContent = '🔇 開啟音樂';
+                isMusicPlaying = false;
+            } else {
+                backgroundMusic.play().catch(e => {
+                    console.log('背景音樂播放失敗，需要用戶互動');
+                    // 如果自動播放失敗，按鈕保持可點擊狀態
+                });
+                musicToggle.textContent = '🎵 關閉音樂';
+                isMusicPlaying = true;
+            }
         });
 
-        video.addEventListener('pause', () => {
-            playPauseBtn.className = 'play-pause-btn play';
-            playPauseBtn.textContent = '';
-            // 暫停時保持控制按鈕可見
-            if (hideControlsTimeout) {
-                clearTimeout(hideControlsTimeout);
-            }
-            videoOverlay.style.opacity = '1';
-            videoOverlay.style.pointerEvents = 'auto';
+        // 背景音樂載入成功
+        backgroundMusic.addEventListener('canplay', () => {
+            console.log('背景音樂載入完成');
+        });
+
+        // 背景音樂播放事件
+        backgroundMusic.addEventListener('play', () => {
+            musicToggle.textContent = '🎵 關閉音樂';
+            isMusicPlaying = true;
+        });
+
+        // 背景音樂暫停事件
+        backgroundMusic.addEventListener('pause', () => {
+            musicToggle.textContent = '🔇 開啟音樂';
+            isMusicPlaying = false;
+        });
+
+        // 背景音樂載入錯誤
+        backgroundMusic.addEventListener('error', () => {
+            console.log('背景音樂載入失敗');
+            musicToggle.style.opacity = '0.5';
+            musicToggle.title = '音樂檔案載入失敗';
         });
 
         // 顯示播放按鈕（當自動播放被阻擋時）
         function showPlayButton() {
             playPauseBtn.className = 'play-pause-btn play';
-            playPauseBtn.textContent = '';
             videoOverlay.style.opacity = '1';
             videoOverlay.style.pointerEvents = 'auto';
             // 暫停狀態下不自動隱藏
