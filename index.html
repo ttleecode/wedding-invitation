@@ -29,7 +29,7 @@
         }
 
         .invitation-container {
-            max-width: 1000px;
+            max-width: 600px; /* 調整容器最大寬度適合直版 */
             width: 90%;
             position: relative;
             margin: auto;
@@ -38,12 +38,14 @@
         .video-card {
             position: relative;
             width: 100%;
+            max-width: 500px; /* 限制最大寬度，避免在大螢幕上太寬 */
             height: 0;
-            padding-bottom: 64.24%; /* 16.5:10.6 比例 */
+            padding-bottom: 177.78%; /* 1920/1080 = 1.7778 = 177.78% 直版比例 */
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             overflow: hidden;
             background: white;
+            margin: 0 auto;
         }
 
         .wedding-video {
