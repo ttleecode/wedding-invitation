@@ -83,20 +83,22 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.9);
-            border: none;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 24px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         .play-pause-btn:hover {
             transform: scale(1.1);
-            background: white;
+            background: rgba(0,0,0,0.9);
+            border-color: rgba(255,255,255,0.5);
         }
 
         .video-controls {
@@ -106,19 +108,21 @@
         }
 
         .sound-toggle {
-            background: rgba(255,255,255,0.9);
-            border: none;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
             border-radius: 25px;
             padding: 10px 20px;
             margin: 0 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .sound-toggle:hover {
-            background: white;
+            background: rgba(0,0,0,0.9);
+            border-color: rgba(255,255,255,0.5);
             transform: translateY(-2px);
         }
 
@@ -202,6 +206,14 @@
                 width: 60px;
                 height: 60px;
                 font-size: 20px;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                border: 2px solid rgba(255,255,255,0.3);
+            }
+            
+            .play-pause-btn:hover {
+                background: rgba(0,0,0,0.9);
+                border-color: rgba(255,255,255,0.5);
             }
             
             .video-hint {
@@ -240,8 +252,9 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(255,255,255,0.8);
-            border: none;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
             border-radius: 5px;
             padding: 8px 12px;
             cursor: pointer;
@@ -255,7 +268,8 @@
         }
 
         .fullscreen-btn:hover {
-            background: rgba(255,255,255,0.95);
+            background: rgba(0,0,0,0.9);
+            border-color: rgba(255,255,255,0.5);
         }
     </style>
 </head>
@@ -274,7 +288,6 @@
                 id="weddingVideo"
                 autoplay 
                 muted 
-                loop
                 playsinline
                 webkit-playsinline
                 style="display: none;"
@@ -300,7 +313,7 @@
         </div>
         
         <div class="video-hint">
-            將滑鼠移到影片上方顯示控制按鈕 ✨
+            影片播放完畢後需手動重播 ✨
         </div>
     </div>
 
@@ -335,7 +348,7 @@
         // 隱藏控制按鈕
         function hideControls() {
             // 只有在影片播放時才隱藏控制按鈕
-            if (!video.paused) {
+            if (!video.paused && !video.ended) {
                 videoOverlay.style.opacity = '0';
                 videoOverlay.style.pointerEvents = 'none';
             }
@@ -368,6 +381,19 @@
             });
         });
 
+        // 影片播放結束時
+        video.addEventListener('ended', () => {
+            // 影片結束後不改變按鈕，保持隱藏狀態
+            // 清除隱藏計時器
+            if (hideControlsTimeout) {
+                clearTimeout(hideControlsTimeout);
+            }
+            
+            // 保持控制按鈕隱藏，讓影片自然定格
+            videoOverlay.style.opacity = '0';
+            videoOverlay.style.pointerEvents = 'none';
+        });
+
         // 影片載入錯誤
         video.addEventListener('error', () => {
             loading.innerHTML = `
@@ -382,7 +408,15 @@
         // 播放/暫停按鈕
         playPauseBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (video.paused) {
+            
+            // 如果影片結束了，重新播放
+            if (video.ended) {
+                video.currentTime = 0;
+                video.play();
+                playPauseBtn.textContent = '⏸️';
+            }
+            // 正常播放/暫停
+            else if (video.paused) {
                 video.play();
                 playPauseBtn.textContent = '⏸️';
             } else {
@@ -395,7 +429,15 @@
         // 點擊影片播放/暫停
         video.addEventListener('click', (e) => {
             if (e.target === video) { // 確保點擊的是影片本身
-                if (video.paused) {
+                // 如果影片結束了，重新播放
+                if (video.ended) {
+                    video.currentTime = 0;
+                    video.play();
+                    playPauseBtn.textContent = '⏸️';
+                    showControls(); // 重新播放時顯示控制按鈕
+                }
+                // 正常播放/暫停
+                else if (video.paused) {
                     video.play();
                     playPauseBtn.textContent = '⏸️';
                 } else {
